@@ -19,26 +19,29 @@ for _ in range(5): # максимум 5 итераций
     )
 
     message = resp.choices[0].message
+    messages.append(message) # добавляем сам ответ модели
+
+    # если модель приняла решение о том что отвечать больше не следует
+    if not message.tool_calls:             
+        print(message.content)
+        break
 
     # если модель приняла решение о том что нужно вызывать инструмент
-    if message.tool_calls: 
+    for tool_call in message.tool_calls: 
         
-        tool_call = message.tool_calls[0]
         tool_name = tool_call.function.name
         tool_arguments = json.loads(tool_call.function.arguments)
 
-        tool_function = TOOL_FUNCTIONS[tool_name]
-        result = tool_function(**tool_arguments)
+        try:
+            result = TOOL_FUNCTIONS[tool_name](**tool_arguments)
+        except Exception as e:
+            result = f"Ошибка при вызове {tool_name}: {e}" 
 
-        messages.append(message) # добавляем сам ответ модели
+        if not isinstance(result, str):
+            result = json.dumps(result, ensure_ascii=False)     
 
         messages.append({ # а затем то что вернула функция
             "role": "tool",
             "tool_call_id": tool_call.id,
             "content": result,
         })
-
-    # иначе отвечаем то как модель ответила сама
-    else: 
-        print(message.content)
-        break
