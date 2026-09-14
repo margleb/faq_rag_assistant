@@ -10,7 +10,12 @@ load_dotenv()
 
 client = OpenAI()
 
-messages = [{"role": "user", "content": "Можно ли посмотреть запись урока?"}]
+messages = [
+    {
+        "role": "user",
+        "content": "Можно ли потом посмотреть запись урока?",
+    }
+]
 
 for _ in range(5):  # максимум 5 итераций
     resp = client.chat.completions.create(
@@ -36,7 +41,7 @@ for _ in range(5):  # максимум 5 итераций
 
         try:
             result = TOOL_FUNCTIONS[tool_name](**tool_arguments)
-        except Exception as e: # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             result = f"Ошибка при вызове {tool_name}: {e}"
 
         if not isinstance(result, str):

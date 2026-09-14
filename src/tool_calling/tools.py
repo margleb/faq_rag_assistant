@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 
+from qdrant_client import QdrantClient
+from sentence_transformers import SentenceTransformer
+
 FAQ_PATH = Path(__file__).parent / "data" / "faq.json"
 
 # читаем один раз, чтобы не вызывать несколько раз
@@ -8,31 +11,32 @@ with open(FAQ_PATH, "r", encoding="utf-8") as file:
     faq = json.load(file)
 
 
+client = QdrantClient(url="http://localhost:6333")
+
+model = SentenceTransformer(
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+)
+
+
 def search(query: str, top_k: int = 3) -> str:
 
-    query_words = [
-        word
-        for word in query.lower().split()
-        if len(word) > 3  # берем слова которые больше 3eх букв
-    ]
-
-    scored = []  # RAG должен хотя бы нескольк а не одно
-    for item in faq:
-        text = (item["question"] + " " + item["answer"]).lower()
-        score = sum(1 for word in query_words if word in text)
-
-        if score:  # берем по лучшим совпадениям
-            scored.append((score, item))
-
-    scored.sort(key=lambda pair: pair[0], reverse=True)  # лучшие сверху
-    top = scored[:top_k]  # до трех вариантов
-
-    if not top:
-        return "В базе FAQ ничего подходящего не найдено"
-
-    return "\n\n".join(
-        f"Вопрос: {item['question']}\nОтвет: {item['answer']}" for _, item in top
+    result = client.query_points(
+        collection_name="faq",
+        query=model.encode(query).tolist(),
+        limit=top_k,
+        with_payload=True,
     )
+
+    chunks = []
+
+    for point in result.points:
+        chunks.append(
+            f"score: {point.score}\n"
+            f"Вопрос: {point.payload['question']}\n"
+            f"Ответ: {point.payload['answer']}"
+        )
+
+    return "\n\n".join(chunks)
 
 
 TOOL_FUNCTIONS = {
