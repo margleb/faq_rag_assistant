@@ -25,16 +25,15 @@ for _ in range(5):  # максимум 5 итераций
     )
 
     message = resp.choices[0].message
-    messages.append(
-        message
-    )  # добавляем сам ответ модели (он должен идти перед ответом)
+    # Сообщение модели с tool_calls должно идти перед результатами инструментов.
+    messages.append(message)
 
-    # если модель приняла решение о том что отвечать больше не следует
+    # Если вызовов инструментов нет, печатаем финальный ответ.
     if not message.tool_calls:
         print(message.content)
         break
 
-    # если модель приняла решение о том что нужно вызывать инструмент
+    # Выполняем все инструменты, которые запросила модель.
     for tool_call in message.tool_calls:
         tool_name = tool_call.function.name
         tool_arguments = json.loads(tool_call.function.arguments)
@@ -48,7 +47,7 @@ for _ in range(5):  # максимум 5 итераций
             result = json.dumps(result, ensure_ascii=False)
 
         messages.append(
-            {  # а затем то что вернула функция
+            {  # Передаём результат функции с идентификатором её вызова.
                 "role": "tool",
                 "tool_call_id": tool_call.id,
                 "content": result,

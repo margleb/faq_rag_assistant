@@ -1,35 +1,11 @@
-import json
-from pathlib import Path
-
-from qdrant_client import QdrantClient
-from sentence_transformers import SentenceTransformer
-
-FAQ_PATH = Path(__file__).parent / "data" / "faq.json"
-
-# читаем один раз, чтобы не вызывать несколько раз
-with open(FAQ_PATH, "r", encoding="utf-8") as file:
-    faq = json.load(file)
-
-
-client = QdrantClient(url="http://localhost:6333")
-
-model = SentenceTransformer(
-    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-)
+from tool_calling.vector_store import semantic_search
 
 
 def search(query: str, top_k: int = 3) -> str:
-
-    result = client.query_points(
-        collection_name="faq",
-        query=model.encode(query).tolist(),
-        limit=top_k,
-        with_payload=True,
-    )
-
+    points = semantic_search(query, top_k=top_k)
     chunks = []
 
-    for point in result.points:
+    for point in points:
         chunks.append(
             f"score: {point.score}\n"
             f"Вопрос: {point.payload['question']}\n"
