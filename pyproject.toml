@@ -1,7 +1,7 @@
 [project]
-name = "tool-calling"
+name = "faq-rag-assistant"
 version = "0.1.0"
-description = "Add your description here"
+description = "FAQ RAG Assistant with tool calling and semantic search"
 readme = "README.md"
 authors = [
     { name = "margleb", email = "margleb.dm@yandex.ru" }
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-tool-calling = "tool_calling:main"
+faq-rag-assistant = "faq_rag_assistant:main"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]

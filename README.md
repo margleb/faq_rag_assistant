@@ -1,8 +1,8 @@
-# tool_calling
+# FAQ RAG Assistant
 
 Учебный FAQ-помощник с LLM tool calling и semantic search. Модель может вызвать инструмент `search`, получить подходящие записи из Qdrant и использовать их при формировании ответа.
 
-Проект использует `gpt-4o-mini` через OpenAI SDK, локальную SentenceTransformer и Qdrant. База знаний — 10 вопросов и ответов о курсе в [faq.json](src/tool_calling/data/faq.json).
+Проект использует `gpt-4o-mini` через OpenAI SDK, локальную SentenceTransformer и Qdrant. База знаний — 10 вопросов и ответов о курсе в [faq.json](src/faq_rag_assistant/data/faq.json).
 
 ## Как работает
 
@@ -32,7 +32,7 @@ faq.json -> ingest.py -> SentenceTransformer -> Qdrant
 ├── .agents/skills/explain-diff/  # Skill для объяснения изменений
 ├── pyproject.toml              # Зависимости и настройки сборки
 ├── uv.lock                     # Зафиксированные зависимости
-└── src/tool_calling/
+└── src/faq_rag_assistant/
     ├── __init__.py             # Шаблонный console entry point
     ├── main.py                 # LLM loop и выполнение tools
     ├── tool_schemas.py         # Schema инструмента search
@@ -76,7 +76,7 @@ docker run --name qdrant -d \
 **Индексация удаляет существующую collection `faq` и создаёт её заново.**
 
 ```bash
-uv run --locked python -m tool_calling.ingest
+uv run --locked python -m faq_rag_assistant.ingest
 ```
 
 После изменения `faq.json` нужно повторить индексацию. Для текущих данных в collection должно быть 10 points:
@@ -96,22 +96,24 @@ OPENAI_API_KEY=ваш_ключ
 `.env` исключён из Git. Затем выполните:
 
 ```bash
-uv run --locked python -m tool_calling.main
+uv run --locked python -m faq_rag_assistant.main
 ```
+
+В VS Code этот модуль запускает конфигурация `Python: FAQ RAG Assistant`.
 
 Вопрос задаётся в `messages` внутри `main.py`; сейчас это `«Какая погода в Москве?»`. Чтобы проверить FAQ-сценарий, замените его, например, на `«Можно потом посмотреть запись урока?»`. Интерактивного ввода и инструмента погоды нет.
 
-Команда `uv run tool-calling` пока вызывает шаблонную функцию из `__init__.py` и печатает `Hello from tool-calling!`. Для LLM loop используйте запуск модуля выше.
+Команда `uv run faq-rag-assistant` пока вызывает шаблонную функцию из `__init__.py` и печатает `Hello from FAQ RAG Assistant!`. Для LLM loop используйте запуск модуля выше.
 
 Поиск можно проверить отдельно, без OpenAI и изменения исходников:
 
 ```bash
-uv run --locked python -c 'from tool_calling.tools import search; print(search("Можно потом посмотреть запись урока?"))'
+uv run --locked python -c 'from faq_rag_assistant.tools import search; print(search("Можно потом посмотреть запись урока?"))'
 ```
 
 ## Настройки
 
-Основные параметры находятся в [config.py](src/tool_calling/config.py):
+Основные параметры находятся в [config.py](src/faq_rag_assistant/config.py):
 
 | Параметр | Значение |
 | --- | --- |
@@ -127,7 +129,7 @@ uv run --locked python -c 'from tool_calling.tools import search; print(search("
 `evaluate.py` проверяет retrieval на трёх размеченных парах `query + expected_id`. Он использует существующую collection и не вызывает LLM.
 
 ```bash
-uv run --locked python -m tool_calling.evaluate
+uv run --locked python -m faq_rag_assistant.evaluate
 ```
 
 Последний проверенный baseline от 16.09.2026, на 10 FAQ-документах без score threshold:
@@ -163,7 +165,6 @@ uv run --locked ruff format .
 - Нет reranker, hybrid search и оценки качества финальных ответов.
 - При исчерпании пяти итераций скрипт может завершиться без финального ответа. Ошибки выполнения tools обрабатываются, ошибки JSON-аргументов и LLM API — нет.
 - Модель и клиенты создаются при импорте; ingestion и evaluation также запускаются на уровне модуля.
-- Конфигурация `.vscode/launch.json` указывает на старый файл `tool_calling.py`. Для запуска используйте команды выше.
 
 ## Объяснение изменений
 

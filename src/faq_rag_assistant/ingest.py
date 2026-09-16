@@ -3,8 +3,8 @@ from pathlib import Path
 
 from qdrant_client.models import PointStruct
 
-from tool_calling.embeddings import encode
-from tool_calling.vector_store import reset_collection, upsert_points
+from faq_rag_assistant.embeddings import encode
+from faq_rag_assistant.vector_store import reset_collection, upsert_points
 
 FAQ_PATH = Path(__file__).parent / "data" / "faq.json"
 

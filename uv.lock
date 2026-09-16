@@ -1496,7 +1496,7 @@ wheels = [
 ]
 
 [[package]]
-name = "tool-calling"
+name = "faq-rag-assistant"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

@@ -2,10 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: tool_calling",
+      "name": "Python: FAQ RAG Assistant",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/src/tool_calling/tool_calling.py",
+      "module": "faq_rag_assistant.main",
       "python": "${workspaceFolder}/.venv/bin/python",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",

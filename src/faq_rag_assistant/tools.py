@@ -1,4 +1,4 @@
-from tool_calling.vector_store import semantic_search
+from faq_rag_assistant.vector_store import semantic_search
 
 
 def search(query: str, top_k: int = 3) -> str:

@@ -3,8 +3,8 @@ import json
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from tool_calling.tool_schemas import TOOLS
-from tool_calling.tools import TOOL_FUNCTIONS
+from faq_rag_assistant.tool_schemas import TOOLS
+from faq_rag_assistant.tools import TOOL_FUNCTIONS
 
 load_dotenv()
 
