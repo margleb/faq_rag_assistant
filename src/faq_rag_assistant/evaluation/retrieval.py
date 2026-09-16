@@ -1,4 +1,4 @@
-from faq_rag_assistant.vector_store import semantic_search
+from faq_rag_assistant.rag.vector_store import semantic_search
 
 GROUND_TRUTH = [
     {

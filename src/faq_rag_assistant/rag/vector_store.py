@@ -2,7 +2,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, ScoredPoint, VectorParams
 
 from faq_rag_assistant.config import COLLECTION_NAME, QDRANT_URL, VECTOR_SIZE
-from faq_rag_assistant.embeddings import encode
+from faq_rag_assistant.rag.embeddings import encode
 
 client = QdrantClient(url=QDRANT_URL)
 

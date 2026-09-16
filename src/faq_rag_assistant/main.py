@@ -1,4 +1,4 @@
-from faq_rag_assistant.agent import run_agent
+from faq_rag_assistant.agent.core import run_agent
 
 messages = [
     {

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from faq_rag_assistant.agent import run_agent
+from faq_rag_assistant.agent.core import run_agent
 
 app = FastAPI(title="FAQ RAG Assistant")
 
@@ -10,7 +10,11 @@ class ChatRequest(BaseModel):
     message: str
 
 
-@app.post("/chat")
+class ChatResponse(BaseModel):
+    answer: str
+
+
+@app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     messages = [
         {
@@ -20,4 +24,5 @@ def chat(request: ChatRequest):
     ]
 
     answer, messages = run_agent(messages)
-    return answer
+
+    return ChatResponse(answer=answer)

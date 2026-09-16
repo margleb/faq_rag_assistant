@@ -3,10 +3,10 @@ from pathlib import Path
 
 from qdrant_client.models import PointStruct
 
-from faq_rag_assistant.embeddings import encode
-from faq_rag_assistant.vector_store import reset_collection, upsert_points
+from faq_rag_assistant.rag.embeddings import encode
+from faq_rag_assistant.rag.vector_store import reset_collection, upsert_points
 
-FAQ_PATH = Path(__file__).parent / "data" / "faq.json"
+FAQ_PATH = Path(__file__).resolve().parents[1] / "data" / "faq.json"
 
 # Исходный JSON нужен только для индексации.
 with open(FAQ_PATH, "r", encoding="utf-8") as file:

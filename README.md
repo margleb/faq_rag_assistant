@@ -76,7 +76,7 @@ docker run --name qdrant -d \
 **Индексация удаляет существующую collection `faq` и создаёт её заново.**
 
 ```bash
-uv run --locked python -m faq_rag_assistant.ingest
+uv run --locked python -m faq_rag_assistant.rag.ingest
 ```
 
 После изменения `faq.json` нужно повторить индексацию. Для текущих данных в collection должно быть 10 points:
@@ -108,7 +108,7 @@ uv run --locked python -m faq_rag_assistant.main
 Поиск можно проверить отдельно, без OpenAI и изменения исходников:
 
 ```bash
-uv run --locked python -c 'from faq_rag_assistant.tools import search; print(search("Можно потом посмотреть запись урока?"))'
+uv run --locked python -c 'from faq_rag_assistant.agent.tools import search; print(search("Можно потом посмотреть запись урока?"))'
 ```
 
 ## Настройки
@@ -129,7 +129,7 @@ uv run --locked python -c 'from faq_rag_assistant.tools import search; print(sea
 `evaluate.py` проверяет retrieval на трёх размеченных парах `query + expected_id`. Он использует существующую collection и не вызывает LLM.
 
 ```bash
-uv run --locked python -m faq_rag_assistant.evaluate
+uv run --locked python -m faq_rag_assistant.evaluation.retrieval
 ```
 
 Последний проверенный baseline от 16.09.2026, на 10 FAQ-документах без score threshold:

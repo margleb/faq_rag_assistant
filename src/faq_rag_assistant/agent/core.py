@@ -3,9 +3,9 @@ import json
 from dotenv.main import load_dotenv
 from openai import OpenAI
 
+from faq_rag_assistant.agent.tool_schemas import TOOLS
+from faq_rag_assistant.agent.tools import TOOL_FUNCTIONS
 from faq_rag_assistant.config import MAX_STEPS
-from faq_rag_assistant.tool_schemas import TOOLS
-from faq_rag_assistant.tools import TOOL_FUNCTIONS
 
 load_dotenv()
 
