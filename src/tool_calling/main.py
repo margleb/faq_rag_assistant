@@ -13,7 +13,7 @@ client = OpenAI()
 messages = [
     {
         "role": "user",
-        "content": "Можно ли потом посмотреть запись урока?",
+        "content": "Какая погода в Москве?",
     }
 ]
 

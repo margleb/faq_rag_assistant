@@ -30,6 +30,7 @@ def semantic_search(query: str, top_k: int = 3) -> list[ScoredPoint]:
         collection_name=COLLECTION_NAME,
         query=encode(query),
         limit=top_k,
+        # score_threshold=0.4,  # отсекаем мусор
         with_payload=True,
     )
     return result.points
