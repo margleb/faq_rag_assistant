@@ -17,6 +17,13 @@ services:
     volumes:
       # Кеш HuggingFace переживает пересоздание контейнера: модель не качается на каждом старте.
       - hf_cache:/root/.cache/huggingface
+    # Контейнер считается готовым только когда uvicorn реально отвечает (после загрузки модели).
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/openapi.json', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
     depends_on:
       - qdrant
       - redis

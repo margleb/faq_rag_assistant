@@ -22,7 +22,7 @@ def run_agent(messages: list[dict]) -> tuple[str, list[dict]]:
 
         message = resp.choices[0].message
         # Сообщение модели с tool_calls должно идти перед результатами инструментов.
-        messages.append(message.model_dump())
+        messages.append(message.model_dump(exclude_none=True))
 
         # Если вызовов инструментов нет, возвращаем финальный ответ.
         if not message.tool_calls:
@@ -50,3 +50,19 @@ def run_agent(messages: list[dict]) -> tuple[str, list[dict]]:
                 }
             )
     return "Не удалось сформировать ответ за допустимое число шагов.", messages
+
+
+SYSTEM_PROMPT = (
+    "Ты ассистент службы поддержки курса. "
+    "Отвечай только на основе результатов инструмента search. "
+    "Если в базе нет ответа — так и скажи, не придумывай."
+)
+
+
+def create_conversation() -> list[dict]:
+    return [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT,
+        }
+    ]

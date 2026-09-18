@@ -3,7 +3,7 @@ import uuid
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from faq_rag_assistant.agent.core import run_agent
+from faq_rag_assistant.agent.core import create_conversation, run_agent
 from faq_rag_assistant.session_store import get_session, save_session
 
 app = FastAPI(title="FAQ RAG Assistant")
@@ -26,7 +26,7 @@ def chat(request: ChatRequest):
 
     if session_id is None:
         session_id = str(uuid.uuid4())
-        messages = []
+        messages = create_conversation()
 
     else:
         messages = get_session(session_id)
