@@ -22,7 +22,7 @@ def run_agent(messages: list[dict]) -> tuple[str, list[dict]]:
 
         message = resp.choices[0].message
         # Сообщение модели с tool_calls должно идти перед результатами инструментов.
-        messages.append(message)
+        messages.append(message.model_dump())
 
         # Если вызовов инструментов нет, возвращаем финальный ответ.
         if not message.tool_calls:

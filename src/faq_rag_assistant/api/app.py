@@ -1,13 +1,12 @@
 import uuid
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from faq_rag_assistant.agent.core import run_agent
+from faq_rag_assistant.session_store import get_session, save_session
 
 app = FastAPI(title="FAQ RAG Assistant")
-
-SESSIONS = {}
 
 
 class ChatRequest(BaseModel):
@@ -23,13 +22,20 @@ class ChatResponse(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
 
-    if request.session_id is None:
+    session_id = request.session_id
+
+    if session_id is None:
         session_id = str(uuid.uuid4())
-        SESSIONS[session_id] = []
-        messages = SESSIONS[session_id]
+        messages = []
+
     else:
-        session_id = request.session_id
-        messages = SESSIONS[session_id]
+        messages = get_session(session_id)
+
+        if messages is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Session not found",
+            )
 
     messages.append(
         {
@@ -40,6 +46,6 @@ def chat(request: ChatRequest):
 
     answer, messages = run_agent(messages)
 
-    SESSIONS[session_id] = messages
+    save_session(session_id, messages)
 
     return ChatResponse(session_id=session_id, answer=answer)
