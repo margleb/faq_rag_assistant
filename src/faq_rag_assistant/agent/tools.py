@@ -1,18 +1,21 @@
 from faq_rag_assistant.rag.vector_store import semantic_search
 
+NOTHING_FOUND = "В базе FAQ ничего не найдено."
 
-def search(query: str, top_k: int = 3) -> str:
+
+def search(query: str, top_k: int | None = None) -> str:
     points = semantic_search(query, top_k=top_k)
-    chunks = []
 
-    for point in points:
-        chunks.append(
-            f"score: {point.score}\n"
-            f"Вопрос: {point.payload['question']}\n"
-            f"Ответ: {point.payload['answer']}"
-        )
+    if not points:
+        # Пустая строка выглядела бы как сбой инструмента; говорим явно.
+        return NOTHING_FOUND
 
-    return "\n\n".join(chunks)
+    return "\n\n".join(
+        f"score: {point.score:.3f}\n"
+        f"Вопрос: {point.payload['question']}\n"
+        f"Ответ: {point.payload['answer']}"
+        for point in points
+    )
 
 
 TOOL_FUNCTIONS = {

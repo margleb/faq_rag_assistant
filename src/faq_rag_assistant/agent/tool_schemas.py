@@ -7,7 +7,13 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string", "description": "Поисковый запрос"}
+                    "query": {"type": "string", "description": "Поисковый запрос"},
+                    "top_k": {
+                        "type": "integer",
+                        "description": "Сколько записей вернуть, по умолчанию 3.",
+                        "minimum": 1,
+                        "maximum": 10,
+                    },
                 },
                 "required": ["query"],
                 "additionalProperties": False,
