@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+.env
+qdrant_storage/
+tests/
+.vscode/
+.agents/
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.py[oc]
