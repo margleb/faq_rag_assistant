@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.141.1",
     "openai>=3.13.0",
-    "python-dotenv>=1.2.3",
+    "pydantic-settings>=2.15.0",
     "qdrant-client>=1.19.0",
     "redis>=8.1.0",
     "sentence-transformers>=6.0.1",
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-faq-rag-assistant = "faq_rag_assistant:main"
+faq-rag-assistant = "faq_rag_assistant.main:main"
 
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13.0"]
@@ -38,3 +38,16 @@ torch = { index = "pytorch-cpu" }
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# E/F — pyflakes и pycodestyle, I — сортировка импортов, UP — современный синтаксис,
+# B — типичные ловушки, SIM — упрощения.
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
