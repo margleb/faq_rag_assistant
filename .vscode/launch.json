@@ -11,7 +11,7 @@
       "envFile": "${workspaceFolder}/.env",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "stopOnEntry": true
+      "stopOnEntry": false
     }
   ]
 }
