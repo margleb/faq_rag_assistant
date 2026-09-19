@@ -1,8 +1,9 @@
 import json
 
 from dotenv.main import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 
+from faq_rag_assistant.agent.exceptions import LLMProviderError
 from faq_rag_assistant.agent.tool_schemas import TOOLS
 from faq_rag_assistant.agent.tools import TOOL_FUNCTIONS
 from faq_rag_assistant.config import MAX_STEPS
@@ -14,11 +15,15 @@ client = OpenAI()
 
 def run_agent(messages: list[dict]) -> tuple[str, list[dict]]:
     for _ in range(MAX_STEPS):  # максимум 5 итераций
-        resp = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            tools=TOOLS,
-        )
+        try:
+            resp = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                tools=TOOLS,
+            )
+        except OpenAIError as error:
+            # здесь нужно выбросить уже НАШ LLMProviderError
+            raise LLMProviderError("Ошибка при обращении к LLM-провайдеру") from error
 
         message = resp.choices[0].message
         # Сообщение модели с tool_calls должно идти перед результатами инструментов.

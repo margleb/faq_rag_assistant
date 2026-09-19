@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from faq_rag_assistant.agent.core import create_conversation, run_agent
+from faq_rag_assistant.agent.exceptions import LLMProviderError
 from faq_rag_assistant.session_store import get_session, save_session
 
 app = FastAPI(title="FAQ RAG Assistant")
@@ -44,7 +45,13 @@ def chat(request: ChatRequest):
         }
     )
 
-    answer, messages = run_agent(messages)
+    try:
+        answer, messages = run_agent(messages)
+    except LLMProviderError as error:
+        raise HTTPException(
+            status_code=502,
+            detail="LLM provider is unavailable",
+        ) from error
 
     save_session(session_id, messages)
 
