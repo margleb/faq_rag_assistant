@@ -1,11 +1,16 @@
+from functools import lru_cache
+
 from numpy import ndarray
 from sentence_transformers import SentenceTransformer
 
-from faq_rag_assistant.config import EMBEDDING_MODEL
+from faq_rag_assistant.config import get_settings
 
-# Одна модель на модуль для индексации и поиска.
-_model = SentenceTransformer(EMBEDDING_MODEL)
+
+@lru_cache
+def get_model() -> SentenceTransformer:
+    """Одна модель на процесс: загрузка весов стоит дорого."""
+    return SentenceTransformer(get_settings().embedding_model)
 
 
 def encode(text: str) -> ndarray:
-    return _model.encode(text)
+    return get_model().encode(text)
